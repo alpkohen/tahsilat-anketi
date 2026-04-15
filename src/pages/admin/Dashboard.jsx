@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef, useCallback } from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   BarChart,
@@ -66,11 +66,34 @@ function participantCountFromGroup(g) {
   return typeof g.completedCount === 'number' ? g.completedCount : 0
 }
 
+const tabBase = {
+  padding: '12px 24px',
+  fontSize: '14px',
+  cursor: 'pointer',
+  border: 'none',
+  borderBottom: '2px solid transparent',
+  background: 'transparent',
+  color: '#555'
+}
+const tabActive = {
+  ...tabBase,
+  background: '#1a1600',
+  borderBottom: '2px solid #C9A84C',
+  color: '#C9A84C'
+}
+const tabInactive = {
+  ...tabBase,
+  background: 'transparent',
+  color: '#555',
+  borderBottom: '2px solid transparent'
+}
+
 export default function Dashboard() {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const selectedGroupId = searchParams.get('group') || ''
-  const analyticsRef = useRef(null)
+
+  const [activeTab, setActiveTab] = useState(() => (searchParams.get('group') ? 'analiz' : 'gruplar'))
+  const [selectedGroupId, setSelectedGroupId] = useState(() => searchParams.get('group') || '')
 
   const [groups, setGroups] = useState([])
   const [loadingGroups, setLoadingGroups] = useState(true)
@@ -118,6 +141,12 @@ export default function Dashboard() {
   useEffect(() => {
     loadGroups()
   }, [loadGroups])
+
+  useEffect(() => {
+    const g = searchParams.get('group') || ''
+    setSelectedGroupId(g)
+    if (g) setActiveTab('analiz')
+  }, [searchParams])
 
   useEffect(() => {
     if (!selectedGroupId) {
@@ -232,21 +261,39 @@ export default function Dashboard() {
     }
   }
 
-  const openAnalytics = (groupId) => {
-    setSearchParams({ group: groupId })
-    setTimeout(() => {
-      analyticsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }, 80)
-  }
-
-  const setGroupParam = (id) => {
+  const setSelectedGroup = (id) => {
+    setSelectedGroupId(id)
     if (id) setSearchParams({ group: id })
     else setSearchParams({})
   }
 
+  const onSonuclariGor = (groupId) => {
+    setSelectedGroup(groupId)
+    setActiveTab('analiz')
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: BG, padding: '24px 20px 48px' }}>
-      <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      <div style={{ maxWidth: '720px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div style={{ borderBottom: '1px solid #1f1f1f' }}>
+          <div style={{ display: 'flex' }}>
+            <button
+              type="button"
+              onClick={() => setActiveTab('gruplar')}
+              style={activeTab === 'gruplar' ? tabActive : tabInactive}
+            >
+              Anket Grupları
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('analiz')}
+              style={activeTab === 'analiz' ? tabActive : tabInactive}
+            >
+              Grup Analizi
+            </button>
+          </div>
+        </div>
+
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ fontSize: '13px', fontWeight: '500', color: GOLD, letterSpacing: '2px' }}>UNIQ Admin</div>
           <button type="button" onClick={() => navigate('/admin/participants')} style={{ background: 'transparent', border: 'none', color: GOLD, fontSize: '14px', cursor: 'pointer', minHeight: '44px', padding: '0 8px' }}>
@@ -254,6 +301,8 @@ export default function Dashboard() {
           </button>
         </header>
 
+        {activeTab === 'gruplar' && (
+          <>
         {/* BÖLÜM 1 */}
         <section>
           <h2 style={{ fontSize: '13px', color: '#888', letterSpacing: '1.5px', marginBottom: '14px', fontWeight: 600 }}>YENİ ANKET GRUBU OLUŞTUR</h2>
@@ -358,7 +407,7 @@ export default function Dashboard() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => openAnalytics(g.id)}
+                      onClick={() => onSonuclariGor(g.id)}
                       style={{
                         minHeight: '48px',
                         padding: '0 18px',
@@ -401,15 +450,39 @@ export default function Dashboard() {
             })}
           </div>
         </section>
+          </>
+        )}
 
-        <hr style={{ border: 'none', borderTop: '1px solid #1f1f1f', margin: 0 }} />
+        {activeTab === 'analiz' && (
+        <section id="group-analytics">
+          <h2 style={{ fontSize: '13px', color: '#888', letterSpacing: '1.5px', marginBottom: '12px', fontWeight: 600 }}>GRUP SEÇİMİ</h2>
+          <div style={{ marginBottom: '20px' }}>
+            <select
+              value={selectedGroupId}
+              onChange={(e) => setSelectedGroup(e.target.value)}
+              style={{
+                width: '100%',
+                minHeight: '48px',
+                background: BG,
+                border: BORDER,
+                borderRadius: '10px',
+                padding: '0 14px',
+                color: '#fff',
+                fontSize: '15px',
+                outline: 'none',
+                cursor: 'pointer'
+              }}
+            >
+              <option value="">Grup seçin…</option>
+              {groups.map((g) => (
+                <option key={g.id} value={g.id}>{g.name}</option>
+              ))}
+            </select>
+          </div>
 
-        {/* BÖLÜM 3 */}
-        <section ref={analyticsRef} id="group-analytics">
-          <h2 style={{ fontSize: '13px', color: '#888', letterSpacing: '1.5px', marginBottom: '14px', fontWeight: 600 }}>GRUP ANALİZİ</h2>
           {!selectedGroupId && (
             <div style={{ background: CARD, border: BORDER, borderRadius: '14px', padding: '24px', textAlign: 'center' }}>
-              <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>Analiz görmek için yukarıdan bir grubun <strong style={{ color: '#888' }}>Sonuçları Gör</strong> butonuna tıklayın.</p>
+              <p style={{ color: '#666', fontSize: '14px', margin: 0 }}>Analiz için yukarıdan bir grup seçin veya <strong style={{ color: '#888' }}>Anket Grupları</strong> sekmesinde <strong style={{ color: '#888' }}>Sonuçları Gör</strong> ile bir grubu açın.</p>
             </div>
           )}
 
@@ -420,10 +493,10 @@ export default function Dashboard() {
               </p>
               <button
                 type="button"
-                onClick={() => setGroupParam('')}
+                onClick={() => setSelectedGroup('')}
                 style={{ background: 'transparent', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer', minHeight: '44px' }}
               >
-                Analizi kapat
+                Seçimi temizle
               </button>
             </div>
           )}
@@ -515,6 +588,7 @@ export default function Dashboard() {
             </div>
           )}
         </section>
+        )}
       </div>
     </div>
   )
