@@ -22,6 +22,7 @@ export default function Survey() {
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState({})
   const [saving, setSaving] = useState(false)
+  const [hoverLikert, setHoverLikert] = useState(null)
 
   const question = QUESTIONS[current]
   const progress = ((current) / QUESTIONS.length) * 100
@@ -81,13 +82,30 @@ export default function Survey() {
             <span>Tamamen katılıyorum</span>
           </div>
 
-          <div style={styles.likert}>
-            {[1,2,3,4,5].map(n => (
-              <button key={n} style={{
-                ...styles.lkBtn,
-                ...(answers[`q${question.id}`] === n ? styles.lkBtnSel : {})
-              }} onClick={() => handleSelect(n)}>{n}</button>
-            ))}
+          <div style={styles.likertWrap}>
+            <div style={styles.likert}>
+              {[1, 2, 3, 4, 5].map((n) => {
+                const selected = answers[`q${question.id}`] === n
+                const hovered = hoverLikert === n && !selected
+                return (
+                  <button
+                    key={n}
+                    type="button"
+                    style={{
+                      ...styles.lkBtn,
+                      ...(selected ? styles.lkBtnSel : {}),
+                      ...(hovered ? styles.lkBtnHover : {})
+                    }}
+                    onMouseEnter={() => setHoverLikert(n)}
+                    onMouseLeave={() => setHoverLikert(null)}
+                    onClick={() => handleSelect(n)}
+                  >
+                    {n}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={styles.likertDivider} aria-hidden />
           </div>
 
           <button style={{
@@ -118,9 +136,33 @@ const styles = {
   qNum: { fontSize: '11px', color: '#C9A84C', fontWeight: '500', letterSpacing: '1px' },
   qText: { fontSize: '15px', color: '#e0e0e0', lineHeight: '1.7' },
   scaleLabels: { display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#555' },
-  likert: { display: 'flex', gap: '8px' },
-  lkBtn: { flex: 1, height: '54px', borderRadius: '12px', border: '1px solid #2a2a2a', background: '#141414', color: '#666', fontSize: '18px', fontWeight: '500', cursor: 'pointer' },
-  lkBtnSel: { borderColor: '#C9A84C', background: '#1f1800', color: '#C9A84C' },
+  likertWrap: { display: 'flex', flexDirection: 'column', gap: '8px' },
+  likert: { display: 'flex', gap: '4px' },
+  likertDivider: { height: '1px', background: '#1f1f1f', width: '100%' },
+  lkBtn: {
+    flex: 1,
+    height: '54px',
+    background: 'transparent',
+    border: 'none',
+    color: '#444',
+    fontSize: '18px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    borderRadius: '12px',
+    transition: 'all 0.15s',
+    boxSizing: 'border-box',
+    padding: 0,
+    minWidth: 0
+  },
+  lkBtnSel: {
+    background: '#1f1800',
+    border: '1.5px solid #C9A84C',
+    color: '#C9A84C'
+  },
+  lkBtnHover: {
+    background: '#161616',
+    color: '#888'
+  },
   nextBtn: { width: '100%', height: '54px', background: '#C9A84C', color: '#0D0D0D', border: 'none', borderRadius: '14px', fontSize: '16px', fontWeight: '600', cursor: 'pointer' },
   backBtn: { width: '100%', height: '44px', background: 'transparent', border: '1px solid #2a2a2a', borderRadius: '14px', color: '#666', fontSize: '14px', cursor: 'pointer' }
 }
