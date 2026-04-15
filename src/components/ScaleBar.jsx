@@ -60,9 +60,9 @@ export function ScaleBar({ score }) {
         }} />
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: '#555' }}>
-        <span style={{ width: '37.5%', textAlign: 'left', color: active === 0 ? GOLD : '#555' }}>Sorgu Hakimi<br />50–65</span>
-        <span style={{ width: '37.5%', textAlign: 'center', color: active === 1 ? GOLD : '#555' }}>Empatik Dinleyici<br />70–80</span>
-        <span style={{ width: '25%', textAlign: 'right', color: active === 2 ? GOLD : '#555' }}>Stratejist<br />85–90</span>
+        <span style={{ width: '37.5%', textAlign: 'left', color: active === 0 ? GOLD : '#555', lineHeight: 1.35 }}>Kural ve Süreç Odaklı Uzman<br />50–65</span>
+        <span style={{ width: '37.5%', textAlign: 'center', color: active === 1 ? GOLD : '#555', lineHeight: 1.35 }}>Sempatik ve İletişim Odaklı Dinleyici<br />70–80</span>
+        <span style={{ width: '25%', textAlign: 'right', color: active === 2 ? GOLD : '#555', lineHeight: 1.35 }}>Müzakere Stratejisti<br />85–90</span>
       </div>
     </div>
   )

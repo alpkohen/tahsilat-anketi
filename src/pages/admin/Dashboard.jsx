@@ -11,8 +11,7 @@ import {
   Cell
 } from 'recharts'
 import { supabase } from '../../lib/supabase'
-
-const PROFILE_ORDER = ['Sorgu Hakimi', 'Empatik Dinleyici', 'Müzakere Stratejisti']
+import { PROFILE_ORDER, normalizeStoredProfile, getProfile } from '../../lib/scoring'
 const GOLD = '#C9A84C'
 const BG = '#0D0D0D'
 const CARD = '#111'
@@ -192,8 +191,9 @@ export default function Dashboard() {
     const profileCounts = {}
     PROFILE_ORDER.forEach((p) => { profileCounts[p] = 0 })
     rows.forEach((r) => {
-      if (r.profile && profileCounts[r.profile] !== undefined) profileCounts[r.profile] += 1
-      else if (r.profile) profileCounts[r.profile] = (profileCounts[r.profile] || 0) + 1
+      const key = normalizeStoredProfile(r.profile)
+      if (key && profileCounts[key] !== undefined) profileCounts[key] += 1
+      else if (key) profileCounts[key] = (profileCounts[key] || 0) + 1
     })
     const n = rows.length
     const questionAvgs = []
@@ -582,7 +582,7 @@ export default function Dashboard() {
                       {r.participant?.first_name} {r.participant?.last_name}
                     </span>
                     <span style={styles.pScore}>{r.final_score}</span>
-                    <span style={styles.pProfile}>{r.profile}</span>
+                    <span style={styles.pProfile}>{getProfile(r.final_score).name}</span>
                   </button>
                 ))}
               </div>

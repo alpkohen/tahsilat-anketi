@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
+import { getProfile } from '../../lib/scoring'
 
 const GOLD = '#C9A84C'
 const BG = '#0D0D0D'
@@ -77,7 +78,7 @@ export default function ParticipantList() {
                 {p.results?.[0] && (
                   <>
                     <span style={styles.score}>{p.results[0].final_score}</span>
-                    <span style={styles.profile}>{p.results[0].profile}</span>
+                    <span style={styles.profile}>{getProfile(p.results[0].final_score).name}</span>
                   </>
                 )}
               </div>

@@ -109,7 +109,7 @@ export default function ParticipantDetail() {
             </div>
             <div style={styles.scoreWrap}>
               <span style={styles.score}>{data.final_score}</span>
-              <span style={styles.profileBadge}>{data.profile}</span>
+              <span style={styles.profileBadge}>{profile.name}</span>
             </div>
           </div>
           <ScaleBar score={data.final_score} />
