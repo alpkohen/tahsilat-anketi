@@ -32,7 +32,7 @@ export default function Landing() {
     <div style={styles.container}>
       <div style={styles.card}>
         <div style={styles.logo}>UNIQ</div>
-        <h1 style={styles.title}>Tahsilat Uzmanı<br />Zihniyet Analizi</h1>
+        <h1 style={styles.title}>Tahsilat Uzmanı<br />Profil Analizi</h1>
         <p style={styles.group}>{group.name}</p>
         <p style={styles.desc}>
           Bu anket, tahsilat görüşmelerindeki doğal reflekslerinizi anlamak için tasarlanmıştır.

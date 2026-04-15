@@ -139,8 +139,15 @@ export default function Dashboard() {
   }, [])
 
   useEffect(() => {
-    loadGroups()
-  }, [loadGroups])
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        navigate('/admin')
+        return
+      }
+      await loadGroups()
+    })()
+  }, [navigate, loadGroups])
 
   useEffect(() => {
     const g = searchParams.get('group') || ''

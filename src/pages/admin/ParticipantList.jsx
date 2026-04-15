@@ -12,13 +12,21 @@ export default function ParticipantList() {
   const [filterGroupId, setFilterGroupId] = useState('')
 
   useEffect(() => {
-    supabase
-      .from('participants')
-      .select('*, survey_groups(name), results(id, final_score, profile)')
-      .order('created_at', { ascending: false })
-      .then(({ data }) => setParticipants(data || []))
-    supabase.from('survey_groups').select('*').order('name').then(({ data }) => setGroups(data || []))
-  }, [])
+    (async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        navigate('/admin')
+        return
+      }
+      const { data: pData } = await supabase
+        .from('participants')
+        .select('*, survey_groups(name), results(id, final_score, profile)')
+        .order('created_at', { ascending: false })
+      setParticipants(pData || [])
+      const { data: gData } = await supabase.from('survey_groups').select('*').order('name')
+      setGroups(gData || [])
+    })()
+  }, [navigate])
 
   const filtered = filterGroupId
     ? participants.filter((p) => String(p.group_id) === filterGroupId)

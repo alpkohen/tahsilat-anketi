@@ -26,13 +26,22 @@ export default function ParticipantDetail() {
   const [groupAvgFinal, setGroupAvgFinal] = useState(null)
 
   useEffect(() => {
-    supabase
-      .from('results')
-      .select('*, participants(first_name, last_name, department, group_id, survey_groups(name))')
-      .eq('id', id)
-      .single()
-      .then(({ data: d }) => setData(d))
-  }, [id])
+    let cancelled = false
+    ;(async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        navigate('/admin')
+        return
+      }
+      const { data: d } = await supabase
+        .from('results')
+        .select('*, participants(first_name, last_name, department, group_id, survey_groups(name))')
+        .eq('id', id)
+        .single()
+      if (!cancelled) setData(d)
+    })()
+    return () => { cancelled = true }
+  }, [id, navigate])
 
   const groupId = data?.participants?.group_id
 
