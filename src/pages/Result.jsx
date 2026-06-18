@@ -7,13 +7,49 @@ import { ScaleBar } from '../components/ScaleBar'
 export default function Result() {
   const { id } = useParams()
   const [data, setData] = useState(null)
+  const [loadState, setLoadState] = useState('loading')
 
   useEffect(() => {
-    supabase.from('results').select('*, participants(first_name, last_name)').eq('id', id).single()
-      .then(({ data }) => setData(data))
+    if (!id) {
+      setLoadState('error')
+      return
+    }
+    let cancelled = false
+    supabase.rpc('get_result_public', { p_result_id: id }).then(({ data: row, error }) => {
+      if (cancelled) return
+      if (error) {
+        setLoadState('error')
+        return
+      }
+      if (!row) {
+        setLoadState('missing')
+        return
+      }
+      setData(row)
+      setLoadState('ok')
+    })
+    return () => { cancelled = true }
   }, [id])
 
-  if (!data) return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: '#666' }}>Yükleniyor...</p></div>
+  if (loadState === 'loading') {
+    return <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><p style={{ color: '#666' }}>Yükleniyor...</p></div>
+  }
+  if (loadState === 'error') {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <p style={{ color: '#ff6b6b', textAlign: 'center', maxWidth: '360px', lineHeight: 1.6 }}>
+          Sonuç yüklenemedi. Supabase’de <code style={{ color: '#aaa' }}>get_result_public</code> fonksiyonunun tanımlı olduğundan emin olun (bkz. <code style={{ color: '#aaa' }}>supabase/rls-policies.sql</code>).
+        </p>
+      </div>
+    )
+  }
+  if (loadState === 'missing' || !data) {
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#888' }}>Bu sonuç bulunamadı veya link geçersiz.</p>
+      </div>
+    )
+  }
 
   const profile = getProfile(data.final_score)
   const ringOffset = 314 - (314 * ((data.final_score - 50) / 40))

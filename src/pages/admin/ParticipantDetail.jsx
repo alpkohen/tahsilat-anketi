@@ -24,6 +24,7 @@ export default function ParticipantDetail() {
 
   const [data, setData] = useState(null)
   const [groupAvgFinal, setGroupAvgFinal] = useState(null)
+  const [fetchError, setFetchError] = useState(null)
 
   useEffect(() => {
     let cancelled = false
@@ -33,12 +34,15 @@ export default function ParticipantDetail() {
         navigate('/admin')
         return
       }
-      const { data: d } = await supabase
+      const { data: d, error } = await supabase
         .from('results')
         .select('*, participants(first_name, last_name, department, group_id, survey_groups(name))')
         .eq('id', id)
         .single()
-      if (!cancelled) setData(d)
+      if (!cancelled) {
+        if (error || !d) setFetchError(error?.message || 'Kayıt bulunamadı.')
+        else setData(d)
+      }
     })()
     return () => { cancelled = true }
   }, [id, navigate])
@@ -70,6 +74,17 @@ export default function ParticipantDetail() {
       { name: 'Grup ortalaması', value: Math.round(groupAvgFinal * 10) / 10 }
     ]
   }, [data, groupAvgFinal])
+
+  if (fetchError) {
+    return (
+      <div style={{ minHeight: '100vh', background: BG, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '24px' }}>
+        <p style={{ color: '#ff6b6b', textAlign: 'center' }}>{fetchError}</p>
+        <button type="button" style={{ background: '#2a2a2a', border: '1px solid #3a3a3a', color: '#ccc', padding: '10px 18px', borderRadius: '10px', cursor: 'pointer' }} onClick={() => navigate('/admin/dashboard')}>
+          Panele dön
+        </button>
+      </div>
+    )
+  }
 
   if (!data) {
     return (

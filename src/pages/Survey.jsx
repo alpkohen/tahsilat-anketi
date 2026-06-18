@@ -5,15 +5,15 @@ import { calculateScores, getProfile } from '../lib/scoring'
 
 const QUESTIONS = [
   { id: 1, text: 'Borçlu "param yok" deyip sustuğunda "Geçmiş olsun" der ve direkt teknik sorulara geçmeyi daha etkili bulurum.' },
-  { id: 2, text: 'Görüşmenin başında borçluya yatırması gereken tutarı direkt söyleyerek ne zaman ödeyeceğini sormayı en doğru yol olarak görürüm.' },
-  { id: 3, text: 'Borçlu "Beni avukata verin, ne olacaksa olsun" dediğinde, başka bir müzakere tekniği kullanmakta zorlanırım.' },
-  { id: 4, text: 'Müşteri lafımı kesip "Biliyorum bunları, boşuna anlatma" dediğinde, sesimi daha da otoriter hale getirerek prosedürü okumaya devam ederim.' },
-  { id: 5, text: 'İşsiz olduğunu söyleyen müşteriye "Bu borcun da ödenmesi lazım, nasıl yapabilirsiniz?" yaklaşımıyla ilerlemeyi daha etkili bulurum.' },
-  { id: 6, text: 'Borçlu sertleştiğinde, ses tonumu yumuşatmak yerine daha sert bir tonda otorite kurmaya çalışırım.' },
-  { id: 7, text: 'Müşterinin "90. günü bekleyeceğim" direncini kırmak için en iyi yöntemim yasal süreleri ve faiz risklerini tebliğ etmektir.' },
+  { id: 2, text: 'Görüşmenin başında yatırılması gereken tutarla birlikte "Ödeme durumunuz nedir?" diye sormayı, zamanı verimli kullanmak ve borçlu üzerine otorite kurmak adına en doğru yol olarak görürüm.' },
+  { id: 3, text: '"Beni avukata verin, ne olacaksa olsun" diyen borçluya, kaybedeceği yasal hakları tekrar tebliğ etmek dışında başka bir müzakere/ikna tekniği kullanmakta zorlanırım.' },
+  { id: 4, text: '"Biliyorum bunları, boşuna anlatma" diyen borçluya lafımı kestiği için sesimi daha da otoriter hale getirerek "Belirttiğim gibi…" deyip prosedürü okumaya devam ederim.' },
+  { id: 5, text: 'İşsiz ve çok yere borçlu olduğunu söyleyen borçluya, "Anlıyorum" deyip teknik ve zorunlu açıklamaları yapmayı daha etkili bulurum.' },
+  { id: 6, text: 'Borçlu sertleştiğinde, ses tonumu bilinçli olarak yumuşatmak yerine daha sert bir tonda otorite kurmaya çalışırım.' },
+  { id: 7, text: '"89. günü bekleyeceğim" / "90 gün sürem var" direncini kırmak için en iyi yöntemim, yasal süreleri ve faiz risklerini tebliğ etmektir.' },
   { id: 8, text: 'Borçlu "Yasal prosedürü biliyorum, boşuna çenenizi yormayın" dediğinde ne diyeceğimi bilemez ve görüşmeyi yönetmekte zorlanırım.' },
   { id: 9, text: 'Görüşmenin büyük kısmında daha çok ben konuşarak yasal süreleri ve sonuçları anlatmayı daha etkili bulurum.' },
-  { id: 10, text: 'Borçlu "Söz verdiğim tarihe kadar ödeyemezsem mahcup olurum" dediğinde ne diyeceğimi bilemez ve görüşmeyi yönetmekte zorlanırım.' }
+  { id: 10, text: 'Mahçup olmak istemediği için ödeme sözü vermekten kaçınan borçluya ne diyeceğimi bilemez ve görüşmeyi yönetmekte zorlanırım.' }
 ]
 
 export default function Survey() {

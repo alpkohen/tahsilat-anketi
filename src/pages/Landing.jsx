@@ -9,11 +9,16 @@ export default function Landing() {
   const [error, setError] = useState(false)
 
   useEffect(() => {
+    if (!slug) {
+      setError(true)
+      return
+    }
     supabase.from('survey_groups').select('*').eq('slug', slug).single()
       .then(({ data, error }) => {
         if (error || !data) setError(true)
         else setGroup(data)
       })
+      .catch(() => setError(true))
   }, [slug])
 
   if (error) return (
